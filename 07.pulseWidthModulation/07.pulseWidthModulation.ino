@@ -25,6 +25,13 @@ static unsigned int redLED = 6;
 static unsigned int onboardLED = 13;
 static unsigned int buttonPIN = 4;
 static unsigned int potPIN = A1;
+
+// Debounce parameters
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 100; // milliseconds
+int lastButtonState = LOW;
+int buttonState = LOW;
+bool ledEnabled = false;
 bool onSTATE = false;
 
 void setup() {
@@ -37,10 +44,42 @@ void setup() {
 }
 
 void loop() {
-  int read = digitalRead(buttonPIN);
-  if (read == true){
+  int reading = digitalRead(buttonPIN);
+
+  // Check if button changed
+  if (reading != lastButtonState){
+    lastDebounceTime = millis();
+  }
+
+  // If enough time has passed (debounce)
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading != buttonState){
+      buttonState = reading;
+      // Only toggle on a HIGH transition (button press)
+      if (buttonState == HIGH) {
+        onSTATE = !onSTATE;
+      }
+    }
+  }
+
+
+  if (reading == true){
     onSTATE = !onSTATE;
   }
-  digitalWrite(onboardLED, onSTATE);
-  delay(150);
+  // Save value for next loop
+  lastButtonState = reading;
+
+  unsigned int dimmer = analogRead(potPIN);
+  Serial.println(dimmer);
+  dimmer = map(dimmer, 0 , 255, 0, 1023);
+
+  if (onSTATE) {
+    analogWrite(onboardLED, dimmer);
+    analogWrite(redLED, dimmer);
+  } else {
+    analogWrite(onboardLED, false);
+    analogWrite(redLED, false);
+  }
+
+  delay(10); // Small delay for stability
 }
