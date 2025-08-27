@@ -32,9 +32,6 @@
 // Includes for ultrasonic
 #include "Ultrasonic.h"
 
-
-
-
 unsigned static int servoPin = 6;
 unsigned static int usPin = 5;
 
@@ -54,19 +51,33 @@ void setup() {
   Serial.println("---------");
 
   OLED.begin();
-  OLED.firstPage();
   OLED.setFont(u8g2_font_6x12_tf);
+  OLED.nextPage();
   delay(3000);
 }
 
-void loop()  {
-  
+void loop(void)  {
+  static String inputString = "";
+  static bool stringComplete = false;
+
+  // Read serial data and build up a string until newline
+  while (Serial.available()) {
+    char inChar = (char)Serial.read();
+    if (inChar == '\n') {
+      stringComplete = true;
+      break;
+    } else if (inChar != '\r') {
+      inputString += inChar;
+    }
+  }
+
   unsigned long RangeInCm;
   RangeInCm = us_sensor.distanceRead();
   // myservo.write(RangeInCm);
   Serial.print(RangeInCm);
   Serial.println(" cm");
-  OLED.drawStr(0, 10, RangeInCm);
+  OLED.firstPage();
+  OLED.drawStr(0, 30, "Screen Active");
   delay(50);
  
   /*
