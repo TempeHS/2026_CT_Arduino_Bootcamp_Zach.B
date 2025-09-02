@@ -28,7 +28,7 @@ static unsigned int OnBoardLED = 13;
 
 void setup() {
   Serial.begin(9600);
-  // Analogue pins do not need to be configured unless you want to use one as a digitaal I/O
+  // Analogue pins do not need to be configured unless you want to use one as a digital I/O
   pinMode(OnBoardLED, OUTPUT);
   pinMode(LEDonPin8, OUTPUT);
 }
