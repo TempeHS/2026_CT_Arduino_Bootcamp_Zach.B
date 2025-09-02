@@ -8,8 +8,7 @@
     1.  I understand how to connect the servo motor
     2.  I can manually write different degrees of movement to the servo
     3.  I can map a potentiometer to a servo and control its movement
-    4.  I understand that a 180deg servo angle of movement is set by a
-        frequency signal sent from the microcontroller
+    4.  I understand that a 180deg servo angle of movement is set by a frequency signal sent from the microcontroller
 
   Student Notes: 
 
@@ -57,25 +56,23 @@ void setup() {
 }
 
 void loop(void)  {
-  static String inputString = "";
-  static bool stringComplete = false;
+String inputString = "10 cm";
+String cleanString = "";
 
-  // Read serial data and build up a string until newline
-  while (Serial.available()) {
-    char inChar = (char)Serial.read();
-    if (inChar == '\n') {
-      stringComplete = true;
-      break;
-    } else if (inChar != '\r') {
-      inputString += inChar;
+  // Remove \r and \n from the input string
+  for (unsigned int i = 0; i < inputString.length(); i++) {
+    char inChar = inputString[i];
+    if (inChar != '\n' && inChar != '\r') {
+      cleanString += inChar;
+    } else if (inChar == '\n') {
+      cleanString += '_'
     }
   }
-
   unsigned long RangeInCm;
   RangeInCm = us_sensor.distanceRead();
-  // myservo.write(RangeInCm);
+  /* myservo.write(RangeInCm);
   Serial.print(RangeInCm);
-  Serial.println(" cm");
+  Serial.println(" cm"); */
   OLED.firstPage();
   OLED.drawStr(0, 30, "Screen Active");
   delay(50);
