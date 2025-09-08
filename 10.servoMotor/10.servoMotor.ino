@@ -48,36 +48,36 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Baud 9600");
   Serial.println("---------");
-
   OLED.begin();
-  OLED.setFont(u8g2_font_6x12_tf);
-  OLED.nextPage();
-  delay(3000);
-}
+}xkzzzzzzzzzz,nma
 
-void loop(void)  {
-String inputString = "10 cm";
-String cleanString = "";
-
-  // Remove \r and \n from the input string
-  for (unsigned int i = 0; i < inputString.length(); i++) {
-    char inChar = inputString[i];
-    if (inChar != '\n' && inChar != '\r') {
-      cleanString += inChar;
-    } else if (inChar == '\n') {
-      cleanString += '_'
-    }
-  }
+void loop()  {
+  
+  OLED.clearBuffer();
   unsigned long RangeInCm;
   RangeInCm = us_sensor.distanceRead();
-  /* myservo.write(RangeInCm);
+  if (RangeInCm > 100) {
+    RangeInCm = 100;
+  }
+  String distanceString = String(RangeInCm);
+  int servoAngle = map(RangeInCm, 0, 100, 0, 180);
+  myservo.write(servoAngle);
+  String servoString = String(servoAngle);
+  OLED.setFont(u8g2_font_6x12_tf);
+  OLED.drawStr(0, 20, servoString.c_str());
+  OLED.drawStr(0, 10, distanceString.c_str());
+  OLED.nextPage();
+
+  /*myservo.write(RangeInCm);
   Serial.print(RangeInCm);
-  Serial.println(" cm"); */
-  OLED.firstPage();
-  OLED.drawStr(0, 30, "Screen Active");
-  delay(50);
- 
-  /*
+  Serial.println(" cm"); 
+  
+  // oled write ultrasonic
+
+  
+  
+  // potentiometer use with servo
+
   val = analogRead(potpin);            // reads the value of the potentiometer
   val = map(val, 0, 1023, 180, 0);     // scale it to use with the servo (val)
   myservo.write(val);                  // sets the servo position according to the potentiometer
